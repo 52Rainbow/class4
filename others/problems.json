@@ -1,0 +1,10 @@
+        const questions = [
+            {
+                "question": "24含义",
+                "answers": ["LUCY", "Lucy","lucy"]
+            },
+            {
+                "question": "课堂点名率最高学号",
+                "answers": ["24","24号"]
+            }
+        ];

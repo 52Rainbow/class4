@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>被封禁界面</title>
+    <style>
+        body {
+            background: url('others/blocked_background.png') no-repeat center center fixed;
+            background-size: cover;
+        }
+
+        .notice-board {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: rgba(255, 255, 255, 0.9);
+            padding: 2rem;
+            border-radius: 10px;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.2);
+            text-align: center;
+        }
+
+        #password-input {
+            margin-top: 1rem;
+        }
+
+        #countdown {
+            margin-top: 1rem;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="notice-board">
+        <h1>您已被封禁</h1>
+        <p>由于多次验证失败，您已被封禁 24 天。请在封禁结束后再尝试访问。（383492384@qq.com作者邮箱，如是4班同学被封可联系作者并证明身份以获得解封密码）</p>
+        <input type="password" id="password" placeholder="输入解封密码">
+        <button onclick="checkPassword()">提交</button>
+        <p id="error-message" style="color: red;"></p>
+        <p id="countdown"></p>
+    </div>
+
+    <script>
+        const passwords = ['辞梦最棒', 'zxcvbnm', 'password3', 'password4', 'password5'];//密码设置
+        const usedPasswords = JSON.parse(localStorage.getItem('usedPasswords')) || [];
+        let errorCount = parseInt(localStorage.getItem('blockedErrorCount')) || 0;
+        const blockedTime = parseInt(localStorage.getItem('blockedTime'));
+        const twentyFourDaysInMs = 24 * 24 * 60 * 60 * 1000;
+        const now = Date.now();
+
+        function startCountdown() {
+            const timeLeft = blockedTime + twentyFourDaysInMs - now;
+            if (timeLeft > 0) {
+                const days = Math.floor(timeLeft / (1000 * 60 * 60 * 24));
+                const hours = Math.floor((timeLeft % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+                const minutes = Math.floor((timeLeft % (1000 * 60 * 60)) / (1000 * 60));
+                const seconds = Math.floor((timeLeft % (1000 * 60)) / 1000);
+                document.getElementById('countdown').textContent = `解封倒计时: ${days} 天 ${hours} 小时 ${minutes} 分钟 ${seconds} 秒`;
+                setTimeout(startCountdown, 1000);
+            } else {
+                document.getElementById('countdown').textContent = '封禁已结束，请重新访问。';
+                localStorage.removeItem('blocked');
+                localStorage.removeItem('blockedTime');
+                localStorage.removeItem('blockedErrorCount');
+                localStorage.removeItem('usedPasswords');
+            }
+        }
+
+        function checkPassword() {
+            if (errorCount >= 5) {
+                document.getElementById('error-message').textContent = '密码功能已禁用，等待封禁结束。';
+                return;
+            }
+            const inputPassword = document.getElementById('password').value;
+            if (passwords.includes(inputPassword) &&!usedPasswords.includes(inputPassword)) {
+                usedPasswords.push(inputPassword);
+                localStorage.setItem('usedPasswords', JSON.stringify(usedPasswords));
+                localStorage.removeItem('blocked');
+                localStorage.removeItem('blockedTime');
+                localStorage.removeItem('blockedErrorCount');
+                window.location.href = 'index.html';
+            } else {
+                errorCount++;
+                localStorage.setItem('blockedErrorCount', errorCount);
+                document.getElementById('error-message').textContent = `密码错误，您还有 ${5 - errorCount} 次机会。`;
+                if (errorCount >= 5) {
+                    document.getElementById('error-message').textContent = '密码功能已禁用，等待封禁结束。';
+                }
+            }
+        }
+
+        // 防止查看代码功能
+        document.addEventListener('keydown', function (e) {
+            if ((e.ctrlKey && e.key === 'u') || (e.ctrlKey && e.key === 's') || (e.key === 'F12')) {
+                e.preventDefault();
+                alert('不允许查看或保存源代码');
+            }
+        });
+
+        document.addEventListener('contextmenu', function (e) {
+            e.preventDefault();
+            alert('不允许查看源代码');
+        });
+
+        startCountdown();
+    </script>
+</body>
+
+</html>    

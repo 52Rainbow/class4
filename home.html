@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>初一4班网站主界面</title>
+    <link rel="stylesheet" href="styles.css">
+    <style>
+        body {
+            background: url('others/home_background.png') no-repeat center center fixed;
+            background-size: cover;
+        }
+
+        .background-blur {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: url('others/home_background.png') no-repeat center center fixed;
+            background-size: cover;
+            filter: blur(5px);
+            z-index: -1;
+        }
+
+        .main-content {
+            position: relative;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+            background-color: rgba(255, 255, 255, 0.8);
+            border-radius: 10px;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            grid-template-rows: auto auto 1fr;
+            gap: 2rem;
+        }
+
+        .big-title {
+            grid-column: 1 / 2;
+            grid-row: 1 / 2;
+            font-size: 3rem;
+            font-weight: bold;
+        }
+
+        .announcement {
+            grid-column: 2 / 3;
+            grid-row: 1 / 2;
+            border: 1px solid #ddd;
+            padding: 1rem;
+        }
+
+        .subsites {
+            grid-column: 1 / 3;
+            grid-row: 2 / 4;
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 2rem;
+        }
+
+        .subsite-preview {
+            border: 1px solid #ddd;
+            padding: 1rem;
+            cursor: pointer;
+        }
+    </style>
+</head>
+
+<body>
+    <script>
+        if (!localStorage.getItem('authenticated')) {
+            window.location.href = 'index.html';
+        }
+    </script>
+    <div class="background-blur"></div>
+    <div class="main-content">
+        <div class="big-title">初一4班班级网站</div>
+        <div class="announcement">
+            <h2>公告栏</h2>
+            <p id="notice">还在制作ing，如果你有好的建议或投稿网站、定制简单网站、背景图片投稿、只有4班同学才能回答的问题+答案可以发我邮箱：383492384@qq.com---------------------后续完善功能：文件分享；群相册；恶搞图片相册；排行榜；电子教程在线阅读；音乐播放器；论坛（因为需要后端服务所有有点难度，我试试）；每个人的简单个人主页（工程量极大，不一定会做）......</p>
+        </div>
+        <div class="subsites">
+            <div class="subsite-preview" onclick="openSubsite('https://jifeng2.netlify.app')">
+                <h3>季风决策者</h3>
+                <div class="preview-image">界面预览画面</div>
+                <p>峰哥的季风决策者，进行了升级，将持续升级版本并修改BUG</p>
+            </div>
+            <div class="subsite-preview" onclick="openSubsite('分网站2')">
+                <h3>分网站2</h3>
+                <div class="preview-image">界面预览画面</div>
+                <p>界面简介...</p>
+            </div>
+            <div class="subsite-preview" onclick="openSubsite('分网站3')">
+                <h3>分网站3</h3>
+                <div class="preview-image">界面预览画面</div>
+                <p>界面简介...</p>
+            </div>
+            <div class="subsite-preview" onclick="openSubsite('分网站4')">
+                <h3>分网站4</h3>
+                <div class="preview-image">界面预览画面</div>
+                <p>界面简介...</p>
+            </div>
+            <div class="subsite-preview" onclick="openSubsite('分网站5')">
+                <h3>分网站5</h3>
+                <div class="preview-image">界面预览画面</div>
+                <p>界面简介...</p>
+            </div>
+            <div class="subsite-preview" onclick="openSubsite('分网站6')">
+                <h3>分网站6</h3>
+                <div class="preview-image">界面预览画面</div>
+                <p>界面简介...</p>
+            </div>
+            <div class="subsite-preview" onclick="openSubsite('分网站7')">
+                <h3>分网站7</h3>
+                <div class="preview-image">界面预览画面</div>
+                <p>界面简介...</p>
+            </div>
+            <div class="subsite-preview" onclick="openSubsite('分网站8')">
+                <h3>分网站8</h3>
+                <div class="preview-image">界面预览画面</div>
+                <p>界面简介...</p>
+            </div>
+            <div class="subsite-preview" onclick="openSubsite('分网站9')">
+                <h3>分网站9</h3>
+                <div class="preview-image">界面预览画面</div>
+                <p>界面简介...</p>
+            </div>
+            <div class="subsite-preview" onclick="openSubsite('分网站10')">
+                <h3>分网站10</h3>
+                <div class="preview-image">界面预览画面</div>
+                <p>界面简介...</p>
+            </div>
+            <div class="subsite-preview" onclick="openSubsite('分网站11')">
+                <h3>分网站11</h3>
+                <div class="preview-image">界面预览画面</div>
+                <p>界面简介...</p>
+            </div>
+            <div class="subsite-preview" onclick="openSubsite('分网站12')">
+                <h3>分网站12</h3>
+                <div class="preview-image">界面预览画面</div>
+                <p>界面简介...</p>
+            </div>
+        </div>
+        <button onclick="openAuthorPage()">关于作者</button>
+    </div>
+
+    <script>
+        document.addEventListener('keydown', function (e) {
+            if ((e.ctrlKey && e.key === 'u') || (e.ctrlKey && e.key === 's') || (e.key === 'F12')) {
+                e.preventDefault();
+                alert('不允许查看或保存源代码');
+            }
+        });
+
+        document.addEventListener('contextmenu', function (e) {
+            e.preventDefault();
+            alert('不允许查看源代码');
+        });
+
+        function openSubsite(siteName) {
+            alert(`即将跳转到 ${siteName}`);
+	    window.open(siteName, '_blank');
+        }
+
+        function openAuthorPage() {
+            alert('即将跳转到作者页面');
+	    window.open('https://cimeng.netlify.app', '_blank');
+        }
+    </script>
+</body>
+
+</html>    

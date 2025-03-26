@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>身份验证</title>
+    <link rel="stylesheet" href="styles.css">
+    <style>
+        body {
+            background: url('others/auth_background.png') no-repeat center center fixed;
+            background-size: cover;
+            transition: filter 0.3s ease;
+        }
+
+        .auth-container {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: rgba(255, 255, 255, 0.9);
+            padding: 2rem;
+            border-radius: 10px;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.2);
+            animation: fadeIn 0.5s ease;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translate(-50%, -50%) scale(0.9);
+            }
+
+            to {
+                opacity: 1;
+                transform: translate(-50%, -50%) scale(1);
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="auth-container">
+        <h1>身份验证</h1>
+        <p id="question">加载问题中...</p>
+        <input type="text" id="answer" placeholder="请输入答案">
+        <div class="timer" id="timer">40</div>
+        <button id="submit-button" onclick="checkAnswer()">提交答案</button>
+    </div>
+
+    <script>
+        const questions = [
+            {
+                "question": "24含义",
+                "answers": ["LUCY", "Lucy","lucy"]
+            },
+            {
+                "question": "课堂点名率最高学号",
+                "answers": ["24","24号"]
+            }
+        ];
+
+        let currentQuestion = null;
+        let timerInterval = null;
+
+        document.addEventListener('DOMContentLoaded', async () => {
+            if (localStorage.getItem('authenticated')) {
+                const authTime = parseInt(localStorage.getItem('authTime'));
+                const now = Date.now();
+                const tenDaysInMs = 10 * 24 * 60 * 60 * 1000;
+                if (now - authTime > tenDaysInMs) {
+                    localStorage.removeItem('authenticated');
+                    localStorage.removeItem('authTime');
+                } else {
+                    window.location.href = 'home.html';
+                    return;
+                }
+            }
+
+            const blockedTime = parseInt(localStorage.getItem('blockedTime'));
+            const now = Date.now();
+            const twentyFourDaysInMs = 24 * 24 * 60 * 60 * 1000;
+            if (blockedTime && now - blockedTime < twentyFourDaysInMs) {
+                window.location.href = 'blocked.html';
+                return;
+            } else if (blockedTime) {
+                localStorage.removeItem('blocked');
+                localStorage.removeItem('blockedTime');
+            }
+
+            try {
+                currentQuestion = questions[Math.floor(Math.random() * questions.length)];
+                document.getElementById('question').textContent = currentQuestion.question;
+                startTimer(40);
+            } catch (error) {
+                console.error('Failed to load verification question:', error);
+            }
+        });
+
+        function startTimer(timeLeft) {
+            const timerElement = document.getElementById('timer');
+            timerInterval = setInterval(() => {
+                timeLeft--;
+                timerElement.textContent = timeLeft;
+                if (timeLeft <= 0) {
+                    clearInterval(timerInterval);
+                    handleFailure();
+                }
+            }, 1000);
+        }
+
+        function checkAnswer() {
+            const userAnswer = document.getElementById('answer').value.trim().toLowerCase();
+            const correctAnswers = currentQuestion.answers.map(a => a.toLowerCase());
+            if (correctAnswers.includes(userAnswer)) {
+                handleSuccess();
+            } else {
+                handleFailure();
+            }
+        }
+
+        function handleSuccess() {
+            clearInterval(timerInterval);
+            localStorage.setItem('authenticated', true);
+            localStorage.setItem('authTime', Date.now());
+
+            const permanentExemptionCheckbox = document.createElement('input');
+            permanentExemptionCheckbox.type = 'checkbox';
+            permanentExemptionCheckbox.id = 'permanentExemption';
+            const label = document.createElement('label');
+            label.textContent = '记住我（永久豁免）';
+            label.setAttribute('for', 'permanentExemption');
+
+            const confirmButton = document.createElement('button');
+            confirmButton.textContent = '确认';
+            confirmButton.onclick = () => {
+                if (permanentExemptionCheckbox.checked) {
+                    localStorage.setItem('permanentExemption', 'granted');
+                }
+                window.location.href = 'home.html';
+            };
+
+            const authContainer = document.querySelector('.auth-container');
+            const checkboxDiv = document.createElement('div');
+            checkboxDiv.style.margin = '1rem 0';
+            checkboxDiv.appendChild(permanentExemptionCheckbox);
+            checkboxDiv.appendChild(label);
+            authContainer.appendChild(checkboxDiv);
+            authContainer.appendChild(confirmButton);
+            document.getElementById('submit-button').style.display = 'none';
+        }
+
+        function handleFailure() {
+            clearInterval(timerInterval);
+            localStorage.setItem('blocked', true);
+            localStorage.setItem('blockedTime', Date.now());
+            window.location.href = 'blocked.html';
+        }
+
+        document.body.style.cursor = "url('others/2.png'), auto";
+
+        // 简单的防查看机制
+        document.addEventListener('keydown', function (e) {
+            if ((e.ctrlKey && e.key === 'u') || (e.ctrlKey && e.key === 's') || (e.key === 'F12')) {
+                e.preventDefault();
+                alert('不允许查看或保存源代码');
+            }
+        });
+
+        document.addEventListener('contextmenu', function (e) {
+            e.preventDefault();
+            alert('不允许查看源代码');
+        });
+    </script>
+</body>
+
+</html>    

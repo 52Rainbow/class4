@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>删除豁免和封禁信息</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            background-color: #f4f4f9;
+        }
+
+        .container {
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            text-align: center;
+        }
+
+        button {
+            padding: 10px 20px;
+            background-color: #007BFF;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+
+        button:hover {
+            background-color: #0056b3;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <h1>删除豁免和封禁信息</h1>
+        <button onclick="clearInfo()">点击删除</button>
+        <p id="message"></p>
+    </div>
+
+    <script>
+        function clearInfo() {
+            // 删除豁免相关信息
+            localStorage.removeItem('authenticated');
+            localStorage.removeItem('authTime');
+            localStorage.removeItem('permanentExemption');
+
+            // 删除封禁相关信息
+            localStorage.removeItem('blocked');
+            localStorage.removeItem('blockedTime');
+            localStorage.removeItem('blockedErrorCount');
+            localStorage.removeItem('usedPasswords');
+
+            const messageElement = document.getElementById('message');
+            messageElement.textContent = '豁免和封禁信息已成功删除。';
+        }
+    </script>
+</body>
+
+</html>    
